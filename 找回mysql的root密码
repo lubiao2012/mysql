@@ -1,0 +1,52 @@
+1.MySQL数据库丢失root密码后，我们应该采取如下的方法来解决：首先，我们需要结束掉mysql的服务进程。然后在windows下面。
+
+一是可以通过任务管理器来结束掉，应该是mysql-nt.exe。二是，如果你的mysql注册为服务的话，可以到服务里面把他先停掉。
+
+在linux或者unix下面直接kill mysql的服务进程就可以。然后，再用 –skip-grant-tables 选项启动mysql服务。在windows下面，到mysql安装目录的bin目录下面运行：mysql-nt –skip-grant-tables 就可以启动mysql服务，这样就可以在无密码的状态下进入mysql用mysql -uroot -p
+
+在linux下面 一般mysql目录在：/usr/bin/safe_mysqld –skip-grant-tables，执行就可以启动了。在Freebsd下面，在/usr/local/etc/rc.d/mysql-server –skip-grant-tables ，执行启动。
+
+进入mysql以后，执行一下语句：
+use mysql
+update user set passwordpassword=password(“new_pass”)
+where user=”root”
+flush privileges;
+
+2.方法二：
+如果忘记了MySQL的root密码，可以用以下方法重新设置：
+
+   1. KILL掉系统里的MySQL进程：killall -TERM mysqld
+
+   2. 用以下命令启动MySQL，以不检查权限的方式启动：safe_mysqld –skip-grant-tables &
+
+   3. 然后用空密码方式使用root用户登录MySQL：mysql -u root
+
+   4. 修改root用户的密码;
+
+   代码：
+   mysql> update mysql.user set password=PASSWORD(‘新密码’) where User=’root';
+   mysql> flush privileges;
+   mysql> quit
+
+3.方法三：
+   1.停止MYSQL服务，CMD打开DOS窗口，输入 net stop mysql
+
+   2.在CMD命令行窗口，进入MYSQL安装目录 比如 d:\mysql20080505\bin
+
+   3.进入mysql安全模式，即当mysql起来后，不用输入密码就能进入数据库。命令为：mysqld-nt –skip-grant-tables
+
+   4.重新打开一个CMD命令 行窗口，输入mysql -uroot -p， 使用空密码的方式登录MySQL(不用输入密码，直接按回车)
+
+　 5.输入以下命令开始修改root用户的密码(注意：命令中mysql.user中间有个“点”)
+　 
+　 代码：mysql> update mysql.user set password=PASSWORD(‘新密码’) where User=’root';
+　 
+　 6.mysql> update mysql.user set password=PASSWORD(‘新密码’) where User=’root';
+　 
+　 7.退出
+　 
+　 mysql> quit 这样MYSQL超级管理员账号ROOT已经重新设置好了，接下来 在任务管理器里结束掉 mysql-nt.exe 这个进程，
+　 重新启动MYSQL即可!(也可以直接重新启动服务器) MYSQL重新启动后，就可以用新设置的ROOT密码登陆MYSQL了!
+　 
+　 
+　 
